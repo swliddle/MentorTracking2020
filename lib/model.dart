@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Mentee {
   var id = "";
   var lastName = "";
@@ -23,16 +25,65 @@ class ActivityRecord {
   ActivityRecord.forMentee(String menteeId) : this.menteeId = menteeId;
 }
 
-// NEEDSWORK: This information (mentees and their associated activity records)
-// should be managed by a ChangeNotifier so our app can monitor updates to the
-// data structure and reflect updates properly in the UI.
-var activityRecords = List<ActivityRecord>();
-var mentees = List<Mentee>();
+class MenteeModel extends ChangeNotifier {
+  var _mentees = <Mentee>[
+    Mentee("1", "Doe", "John", "801-555-1212",
+        "email@example.com", <ActivityRecord>[
+      ActivityRecord("1", "1", DateTime.parse("2020-01-02 08:18:04Z"), 30,
+          "Had a great time"),
+      ActivityRecord("2", "1", DateTime.parse("2020-01-03 09:19:06Z"), 15,
+          "Had a great time"),
+      ActivityRecord("3", "1", DateTime.parse("2020-01-04 10:20:09Z"), 30,
+          "Had a great time"),
+      ActivityRecord("4", "1", DateTime.parse("2020-01-05 11:21:13Z"), 15,
+          "Had a great time"),
+      ActivityRecord("5", "1", DateTime.parse("2020-01-06 12:22:17Z"), 30,
+          "Had a great time"),
+    ]),
+    Mentee("2", "Roe", "Mary", "801-555-1212",
+        "email@example.com", <ActivityRecord>[
+      ActivityRecord("1", "1", DateTime.parse("2020-01-07 12:18:04Z"), 30,
+          "Had a great time"),
+      ActivityRecord("2", "1", DateTime.parse("2020-01-08 13:28:14Z"), 15,
+          "Had a great time"),
+      ActivityRecord("3", "1", DateTime.parse("2020-01-09 14:38:24Z"), 30,
+          "Had a great time"),
+      ActivityRecord("4", "1", DateTime.parse("2020-01-10 15:48:34Z"), 15,
+          "Had a great time"),
+      ActivityRecord("5", "1", DateTime.parse("2020-01-11 16:58:44Z"), 30,
+          "Had a great time"),
+    ]),
+  ];
 
-// NEEDSWORK: We're a bit dissatisfied with this approach to IDs.  Could it be
-// included in a class or something?  At a minimum, when we have a more robust
-// model we'll need to update this whenever the model updates.
-int _nextIdValue = 1;
+  get mentees => _mentees;
+  get activityRecords => _mentees
+      .map((mentee) => mentee.activityLog)
+      .reduce((value, element) => value + element);
+
+  Mentee menteeForMenteeId(String menteeId) {
+    return _mentees.firstWhere((mentee) => mentee.id == menteeId);
+  }
+
+  List<ActivityRecord> activityRecordsForMenteeId(String menteeId) {
+    return _mentees.firstWhere((mentee) => mentee.id == menteeId).activityLog;
+  }
+
+  void addMentee(Mentee mentee) {
+    mentee.id = _nextId();
+    _mentees.add(mentee);
+    notifyListeners();
+  }
+
+  void addActivityRecordForMentee(String menteeId, ActivityRecord record) {
+    _mentees
+        .firstWhere((mentee) => mentee.id == menteeId)
+        .activityLog
+        .add(record);
+    notifyListeners();
+  }
+}
+
+int _nextIdValue = 10;
 
 String _nextId() {
   _nextIdValue += 1;

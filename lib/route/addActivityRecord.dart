@@ -3,20 +3,20 @@ import 'package:intl/intl.dart';
 import 'package:mentor_tracking/model.dart';
 
 class AddActivityRecordRoute extends StatefulWidget {
-  final menteeId;
+  final mentee;
 
-  AddActivityRecordRoute(this.menteeId);
+  AddActivityRecordRoute(this.mentee);
 
   @override
   _AddActivityRecordRouteState createState() =>
-      _AddActivityRecordRouteState(menteeId);
+      _AddActivityRecordRouteState(mentee);
 }
 
 class _AddActivityRecordRouteState extends State<AddActivityRecordRoute> {
   ActivityRecord _record;
 
-  _AddActivityRecordRouteState(menteeId)
-      : this._record = ActivityRecord.forMentee(menteeId);
+  _AddActivityRecordRouteState(mentee)
+      : this._record = ActivityRecord.forMentee(mentee.id);
 
   void _callDatePicker(BuildContext context) async {
     var chosenDate = await showDatePicker(
@@ -64,8 +64,8 @@ class _AddActivityRecordRouteState extends State<AddActivityRecordRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // NEEDSWORK: get this from the app state
-        title: Text("Log Activity with Jane Doe"),
+        title: Text(
+            "Log Activity with ${widget.mentee.firstName} ${widget.mentee.lastName}"),
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),
