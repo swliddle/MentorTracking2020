@@ -66,6 +66,14 @@ class _MainAppRouteState extends State<MainAppRoute> {
                                 MenteeActivityListRoute(mentee.id)),
                       );
                     },
+                    onLongPress: () async {
+                      var editedMentee =
+                          await addOrEditMenteeDialog(context, mentee);
+
+                      if (editedMentee != null) {
+                        model.editMentee(editedMentee);
+                      }
+                    },
                   ),
                 );
               },
@@ -124,7 +132,7 @@ class _MainAppRouteState extends State<MainAppRoute> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            var mentee = await addMenteeDialog(context);
+            var mentee = await addOrEditMenteeDialog(context);
 
             if (mentee != null) {
               model.addMentee(mentee);

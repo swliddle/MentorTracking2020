@@ -10,6 +10,21 @@ class Mentee {
 
   Mentee(this.id, this.lastName, this.firstName, this.cellPhone, this.email,
       this.activityLog);
+
+  String getField(String fieldName) {
+    switch (fieldName) {
+      case "lastName":
+        return lastName;
+      case "firstName":
+        return firstName;
+      case "cellPhone":
+        return cellPhone;
+      case "email":
+        return email;
+    }
+
+    return null;
+  }
 }
 
 class ActivityRecord {
@@ -81,6 +96,21 @@ class MenteeModel extends ChangeNotifier {
         .add(record);
     notifyListeners();
   }
+
+  void editMentee(Mentee mentee) {
+    var editedMentee = _mentees.firstWhere((m) => m.id == mentee.id);
+
+    if (editedMentee != null) {
+      editedMentee.firstName = mentee.firstName;
+      editedMentee.lastName = mentee.lastName;
+      editedMentee.cellPhone = mentee.cellPhone;
+      editedMentee.email = mentee.email;
+    }
+
+    notifyListeners();
+  }
+
+  // NEEDSWORK: implement delete
 }
 
 int _nextIdValue = 10;
