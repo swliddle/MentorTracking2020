@@ -65,16 +65,18 @@ class MenteeModel extends ChangeNotifier {
   var _mentees = <Mentee>[];
 
   MenteeModel() {
-    _getInitialData(_mentees);
+    _getInitialData();
   }
 
-  static void _getInitialData(List<Mentee> menteesList) async {
+  void _getInitialData() async {
     var jsonString = await rootBundle.loadString('assets/initial_data.json');
     var jsonData = jsonDecode(jsonString);
 
     jsonData.forEach((jsonObject) {
-      menteesList.add(Mentee.fromJson(jsonObject));
+      _mentees.add(Mentee.fromJson(jsonObject));
     });
+
+    notifyListeners();
   }
 
   get mentees => _mentees;
