@@ -19,8 +19,11 @@ class Mentee {
         this.firstName = json["firstName"],
         this.lastName = json["lastName"],
         this.cellPhone = json["cellPhone"],
-        this.email = json["email"],
-        this.activityLog = <ActivityRecord>[];
+        this.email = json["email"] {
+    json["activityLog"].forEach((activityRecord) {
+      activityLog.add(ActivityRecord.fromJson(activityRecord));
+    });
+  }
 
   String getField(String fieldName) {
     switch (fieldName) {
@@ -49,6 +52,13 @@ class ActivityRecord {
       this.id, this.menteeId, this.date, this.minutesSpent, this.notes);
 
   ActivityRecord.forMentee(String menteeId) : this.menteeId = menteeId;
+
+  ActivityRecord.fromJson(Map<String, dynamic> json)
+      : this.id = json["id"],
+        this.menteeId = json["menteeId"],
+        this.date = DateTime.parse(json["date"]),
+        this.minutesSpent = json["minutesSpent"],
+        this.notes = json["notes"];
 }
 
 class MenteeModel extends ChangeNotifier {
