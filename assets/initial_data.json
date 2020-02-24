@@ -1,0 +1,46 @@
+[
+  {
+    "id":"1",
+    "lastName":"Doe",
+    "firstName":"John",
+    "cellPhone":"801-555-1212",
+    "email":"email@example.com",
+    "activityLog":[
+      {
+        "id":"1",
+        "menteeId":"1",
+        "date":"2020-01-02 08:18:04Z",
+        "minutesSpent":30,
+        "notes":"Had a great time"
+      },
+      {
+        "id":"2",
+        "menteeId":"1",
+        "date":"2020-01-03 08:18:04Z",
+        "minutesSpent":15,
+        "notes":"Had a great time"
+      },
+      {
+        "id":"3",
+        "menteeId":"1",
+        "date":"2020-01-04 08:18:04Z",
+        "minutesSpent":30,
+        "notes":"Had a great time"
+      },
+      {
+        "id":"4",
+        "menteeId":"1",
+        "date":"2020-01-05 08:18:04Z",
+        "minutesSpent":15,
+        "notes":"Had a great time"
+      },
+      {
+        "id":"5",
+        "menteeId":"1",
+        "date":"2020-01-06 08:18:04Z",
+        "minutesSpent":30,
+        "notes":"Had a great time"
+      }
+    ]
+  }
+]
