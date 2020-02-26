@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'CET Mentor Tracking',
         theme: ThemeData(
-          primarySwatch: Colors.green,
+          primarySwatch: Colors.lightGreen,
         ),
         home: HomeRoute(title: 'CET Mentor Tracking App'),
       ),

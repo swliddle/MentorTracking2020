@@ -95,7 +95,9 @@ class _HomeRouteState extends State<HomeRoute> {
             ),
           ],
           currentIndex: _selectedIndex,
-          backgroundColor: Colors.green[100],
+          backgroundColor: Colors.lightGreen[200],
+          selectedItemColor: Colors.grey[900],
+          unselectedItemColor: Colors.grey[500],
           onTap: _onItemTapped,
         ),
         floatingActionButton: FloatingActionButton(
