@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Mentee {
   static const kFieldId = "id";
@@ -46,6 +47,15 @@ class Mentee {
 
     return null;
   }
+
+  Map<String, dynamic> toJson() => {
+        kFieldId: id,
+        kFieldLastName: lastName,
+        kFieldFirstName: firstName,
+        kFieldCellPhone: cellPhone,
+        kFieldEmail: email,
+        kFieldActivityLog: activityLog,
+      };
 }
 
 class ActivityRecord {
@@ -72,10 +82,19 @@ class ActivityRecord {
         this.date = DateTime.parse(json[kFieldDate]),
         this.minutesSpent = json[kFieldMinutesSpent],
         this.notes = json[kFieldNotes];
+
+  Map<String, dynamic> toJson() => {
+        kFieldId: id,
+        kFieldMenteeId: menteeId,
+        kFieldDate: date.toIso8601String(),
+        kFieldMinutesSpent: minutesSpent,
+        kFieldNotes: notes,
+      };
 }
 
 class MenteeModel extends ChangeNotifier {
   static const kInitialDataPath = "assets/initial_data.json";
+  static const kDataPath = "data.json";
 
   var _mentees = <Mentee>[];
 
@@ -83,15 +102,32 @@ class MenteeModel extends ChangeNotifier {
     _getInitialData();
   }
 
+  Future<File> get _dataFile async {
+    var docsPath = await _documentsPath;
+
+    return File('$docsPath/$kDataPath');
+  }
+
+  Future<String> get _documentsPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
   void _getInitialData() async {
-    var jsonString = await rootBundle.loadString(kInitialDataPath);
-    var jsonData = jsonDecode(jsonString);
+    var dataFile = await _dataFile;
 
-    jsonData.forEach((jsonObject) {
-      _mentees.add(Mentee.fromJson(jsonObject));
-    });
+    if (dataFile.existsSync()) {
+      var jsonString = await dataFile.readAsString();
+      print("Read $jsonString");
+      var jsonData = jsonDecode(jsonString);
 
-    notifyListeners();
+      jsonData.forEach((jsonObject) {
+        _mentees.add(Mentee.fromJson(jsonObject));
+      });
+
+      notifyListeners();
+    }
   }
 
   get mentees => _mentees;
@@ -132,6 +168,22 @@ class MenteeModel extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  @override
+  void notifyListeners() {
+    super.notifyListeners();
+
+    saveMentees();
+  }
+
+  Future<void> saveMentees() async {
+    final file = await _dataFile;
+    final data = jsonEncode(_mentees);
+
+    print("Saving $data");
+
+    file.writeAsString(jsonEncode(_mentees));
   }
 
   // NEEDSWORK: implement delete
