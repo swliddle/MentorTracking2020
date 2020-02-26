@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mentor_tracking/model.dart';
-import 'package:mentor_tracking/route/mainApp.dart';
+import 'package:mentor_tracking/route/home_route.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'CET Mentor Tracking',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.green,
         ),
-        home: MainAppRoute(title: 'CET Mentor Tracking App'),
+        home: HomeRoute(title: 'CET Mentor Tracking App'),
       ),
     );
   }

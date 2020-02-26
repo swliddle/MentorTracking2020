@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Mentee {
+  static const kFieldId = "id";
+  static const kFieldLastName = "lastName";
+  static const kFieldFirstName = "firstName";
+  static const kFieldCellPhone = "cellPhone";
+  static const kFieldEmail = "email";
+  static const kFieldActivityLog = "activityLog";
+
   var id = "";
   var lastName = "";
   var firstName = "";
@@ -15,25 +22,25 @@ class Mentee {
       this.activityLog);
 
   Mentee.fromJson(Map<String, dynamic> json)
-      : this.id = json["id"],
-        this.firstName = json["firstName"],
-        this.lastName = json["lastName"],
-        this.cellPhone = json["cellPhone"],
-        this.email = json["email"] {
-    json["activityLog"].forEach((activityRecord) {
+      : this.id = json[kFieldId],
+        this.lastName = json[kFieldLastName],
+        this.firstName = json[kFieldFirstName],
+        this.cellPhone = json[kFieldCellPhone],
+        this.email = json[kFieldEmail] {
+    json[kFieldActivityLog].forEach((activityRecord) {
       activityLog.add(ActivityRecord.fromJson(activityRecord));
     });
   }
 
   String getField(String fieldName) {
     switch (fieldName) {
-      case "lastName":
+      case kFieldLastName:
         return lastName;
-      case "firstName":
+      case kFieldFirstName:
         return firstName;
-      case "cellPhone":
+      case kFieldCellPhone:
         return cellPhone;
-      case "email":
+      case kFieldEmail:
         return email;
     }
 
@@ -42,6 +49,12 @@ class Mentee {
 }
 
 class ActivityRecord {
+  static const kFieldId = "id";
+  static const kFieldMenteeId = "menteeId";
+  static const kFieldDate = "date";
+  static const kFieldMinutesSpent = "minutesSpent";
+  static const kFieldNotes = "notes";
+
   String id = _nextId();
   String menteeId;
   DateTime date = DateTime.now();
@@ -54,14 +67,16 @@ class ActivityRecord {
   ActivityRecord.forMentee(String menteeId) : this.menteeId = menteeId;
 
   ActivityRecord.fromJson(Map<String, dynamic> json)
-      : this.id = json["id"],
-        this.menteeId = json["menteeId"],
-        this.date = DateTime.parse(json["date"]),
-        this.minutesSpent = json["minutesSpent"],
-        this.notes = json["notes"];
+      : this.id = json[kFieldId],
+        this.menteeId = json[kFieldMenteeId],
+        this.date = DateTime.parse(json[kFieldDate]),
+        this.minutesSpent = json[kFieldMinutesSpent],
+        this.notes = json[kFieldNotes];
 }
 
 class MenteeModel extends ChangeNotifier {
+  static const kInitialDataPath = "assets/initial_data.json";
+
   var _mentees = <Mentee>[];
 
   MenteeModel() {
@@ -69,7 +84,7 @@ class MenteeModel extends ChangeNotifier {
   }
 
   void _getInitialData() async {
-    var jsonString = await rootBundle.loadString('assets/initial_data.json');
+    var jsonString = await rootBundle.loadString(kInitialDataPath);
     var jsonData = jsonDecode(jsonString);
 
     jsonData.forEach((jsonObject) {
