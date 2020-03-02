@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mentor_tracking/utilities/performance_monitor.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Mentee {
   static const kFieldId = "id";
@@ -97,6 +99,7 @@ class MenteeModel extends ChangeNotifier {
   static const kInitialDataPath = "assets/initial_data.json";
   static const kDataPath = "data.json";
 
+  Database _database;
   var _mentees = <Mentee>[];
 
   MenteeModel() {
@@ -115,7 +118,42 @@ class MenteeModel extends ChangeNotifier {
     return directory.path;
   }
 
+  void _openDatabase() async {
+    var dbPath = await getDatabasesPath();
+
+    print(dbPath);
+
+    _database = await openDatabase(
+      join(await getDatabasesPath(), 'mentoring.db'),
+      onCreate: (db, version) async {
+        await db.execute(
+          """
+          CREATE TABLE mentee(
+            id INTEGER PRIMARY KEY,
+            firstName TEXT,
+            lastName TEXT,
+            cellPhone TEXT,
+            email TEXT)
+          """,
+        );
+        return db.execute(
+          """
+          CREATE TABLE activityRecord(
+            id INTEGER PRIMARY KEY,
+            menteeId INTEGER,
+            date TEXT,
+            minutesSpent INTEGER,
+            notes TEXT)
+          """,
+        );
+      },
+      version: 1,
+    );
+  }
+
   void _getInitialData() async {
+    _openDatabase();
+
     var dataFile = await _dataFile;
 
     if (dataFile.existsSync()) {
