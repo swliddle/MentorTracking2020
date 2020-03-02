@@ -65,7 +65,7 @@ class _AddActivityRecordRouteState extends State<AddActivityRecordRoute> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            "Log Activity with ${widget.mentee.firstName} ${widget.mentee.lastName}"),
+            "Log Activity with ${widget.mentee.firstName.trim()} ${widget.mentee.lastName.trim()}"),
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),

@@ -33,8 +33,9 @@ class _HomeRouteState extends State<HomeRoute> {
                 return Card(
                   child: ListTile(
                     leading: Icon(Icons.person),
-                    title: Text('${mentee.firstName} ${mentee.lastName}'),
-                    subtitle: Text('${mentee.cellPhone} ${mentee.email}'),
+                    title: Text(
+                        '${mentee.firstName.trim()} ${mentee.lastName.trim()}'),
+                    subtitle: Text('${mentee.cellPhone}  ${mentee.email}'),
                     onTap: () {
                       Navigator.push(
                         context,

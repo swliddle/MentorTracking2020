@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mentor_tracking/utilities/performance_monitor.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Mentee {
@@ -119,7 +120,6 @@ class MenteeModel extends ChangeNotifier {
 
     if (dataFile.existsSync()) {
       var jsonString = await dataFile.readAsString();
-      print("Read $jsonString");
       var jsonData = jsonDecode(jsonString);
 
       jsonData.forEach((jsonObject) {
@@ -178,12 +178,13 @@ class MenteeModel extends ChangeNotifier {
   }
 
   Future<void> saveMentees() async {
+    var monitor = PerformanceMonitor();
     final file = await _dataFile;
     final data = jsonEncode(_mentees);
 
-    print("Saving $data");
+    await file.writeAsString(jsonEncode(_mentees));
 
-    file.writeAsString(jsonEncode(_mentees));
+    print("saveMentees took ${monitor.timeElapsed().inMicroseconds}µs");
   }
 
   // NEEDSWORK: implement delete
