@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mentor_tracking/model.dart';
+import 'package:mentor_tracking/model/activity_record.dart';
+import 'package:mentor_tracking/model/model.dart';
 import 'package:mentor_tracking/route/addActivityRecord.dart';
 import 'package:provider/provider.dart';
 

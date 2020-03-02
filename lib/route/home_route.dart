@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mentor_tracking/dialog/addMentee.dart';
-import 'package:mentor_tracking/model.dart';
+import 'package:mentor_tracking/model/model.dart';
 import 'package:mentor_tracking/route/menteeActivity.dart';
 import 'package:provider/provider.dart';
 

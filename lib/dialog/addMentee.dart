@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mentor_tracking/model.dart';
+import 'package:mentor_tracking/model/activity_record.dart';
+import 'package:mentor_tracking/model/mentee.dart';
 
 Future<Mentee> addOrEditMenteeDialog(BuildContext context,
     [Mentee menteeToEdit]) async {

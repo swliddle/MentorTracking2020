@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mentor_tracking/model.dart';
+import 'package:mentor_tracking/model/activity_record.dart';
 
 class AddActivityRecordRoute extends StatefulWidget {
   final mentee;
