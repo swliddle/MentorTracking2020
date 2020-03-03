@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mentor_tracking/model/activity_record.dart';
 import 'package:mentor_tracking/model/mentee.dart';
 
 Future<Mentee> addOrEditMenteeDialog(BuildContext context,
     [Mentee menteeToEdit]) async {
-  Mentee _mentee = Mentee("", "", "", "", "", <ActivityRecord>[]);
+  Mentee _mentee = Mentee(0, "", "", "", "");
 
   const FIELD_HINT = "hint";
   const FIELD_LABEL = "label";

@@ -1,4 +1,4 @@
-import 'package:mentor_tracking/model/model.dart';
+import 'package:mentor_tracking/model/uuid.dart';
 
 class ActivityRecord {
   static const kFieldId = "id";
@@ -7,8 +7,8 @@ class ActivityRecord {
   static const kFieldMinutesSpent = "minutesSpent";
   static const kFieldNotes = "notes";
 
-  String id = nextId();
-  String menteeId;
+  int id = nextId();
+  int menteeId;
   DateTime date = DateTime.now();
   int minutesSpent = 30;
   String notes = "";
@@ -16,16 +16,16 @@ class ActivityRecord {
   ActivityRecord(
       this.id, this.menteeId, this.date, this.minutesSpent, this.notes);
 
-  ActivityRecord.forMentee(String menteeId) : this.menteeId = menteeId;
+  ActivityRecord.forMentee(int menteeId) : this.menteeId = menteeId;
 
-  ActivityRecord.fromJson(Map<String, dynamic> json)
-      : this.id = json[kFieldId],
-        this.menteeId = json[kFieldMenteeId],
-        this.date = DateTime.parse(json[kFieldDate]),
-        this.minutesSpent = json[kFieldMinutesSpent],
-        this.notes = json[kFieldNotes];
+  ActivityRecord.fromMap(Map<String, dynamic> map)
+      : this.id = map[kFieldId],
+        this.menteeId = map[kFieldMenteeId],
+        this.date = DateTime.parse(map[kFieldDate]),
+        this.minutesSpent = map[kFieldMinutesSpent],
+        this.notes = map[kFieldNotes];
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMap() => {
         kFieldId: id,
         kFieldMenteeId: menteeId,
         kFieldDate: date.toIso8601String(),
