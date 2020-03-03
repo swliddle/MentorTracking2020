@@ -3,6 +3,7 @@ import 'package:mentor_tracking/model/activity_record.dart';
 import 'package:mentor_tracking/model/database.dart';
 import 'package:mentor_tracking/model/mentee.dart';
 import 'package:mentor_tracking/model/uuid.dart';
+import 'package:mentor_tracking/utilities/performance_monitor.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MenteeModel extends ChangeNotifier {
@@ -17,12 +18,16 @@ class MenteeModel extends ChangeNotifier {
    *                        CREATE METHODS
    */
   Future<void> addMentee(Mentee mentee) async {
+    var monitor = PerformanceMonitor();
+
     mentee.id = nextId();
     await database.insert(
       tableMentee,
       mentee.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    print("addMentee took ${monitor.timeElapsed().inMilliseconds}ms");
 
     notifyListeners();
   }

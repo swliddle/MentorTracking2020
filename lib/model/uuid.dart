@@ -7,3 +7,7 @@ int nextId() {
 
   return _nextIdValue;
 }
+
+setId(int id) {
+  _nextIdValue = id;
+}
