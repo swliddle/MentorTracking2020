@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
+import 'package:mentor_tracking/model/mentee.dart';
+import 'package:mentor_tracking/model/model.dart';
+import 'package:provider/provider.dart';
 
 class AddActivityRecordRoute extends StatefulWidget {
-  final mentee;
+  final menteeId;
 
-  AddActivityRecordRoute(this.mentee);
+  AddActivityRecordRoute(this.menteeId);
 
   @override
   _AddActivityRecordRouteState createState() =>
-      _AddActivityRecordRouteState(mentee);
+      _AddActivityRecordRouteState(menteeId);
 }
 
 class _AddActivityRecordRouteState extends State<AddActivityRecordRoute> {
   ActivityRecord _record;
 
-  _AddActivityRecordRouteState(mentee)
-      : this._record = ActivityRecord.forMentee(mentee.id);
+  _AddActivityRecordRouteState(menteeId)
+      : this._record = ActivityRecord.forMentee(menteeId);
 
   void _callDatePicker(BuildContext context) async {
     var chosenDate = await showDatePicker(
@@ -60,12 +63,10 @@ class _AddActivityRecordRouteState extends State<AddActivityRecordRoute> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _editForm(String title) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            "Log Activity with ${widget.mentee.firstName.trim()} ${widget.mentee.lastName.trim()}"),
+        title: Text(title),
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),
@@ -157,6 +158,27 @@ class _AddActivityRecordRouteState extends State<AddActivityRecordRoute> {
           )
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<MenteeModel>(
+      builder: (context, model, child) {
+        return FutureBuilder(
+          future: model.menteeForId(widget.menteeId),
+          builder: (context, AsyncSnapshot<Mentee> snapshot) {
+            String title = "Log Activity";
+
+            if (snapshot.hasData) {
+              title =
+                  "Log Activity with ${snapshot.data.firstName.trim()} ${snapshot.data.lastName.trim()}";
+            }
+
+            return _editForm(title);
+          },
+        );
+      },
     );
   }
 }

@@ -5,7 +5,7 @@ import 'package:mentor_tracking/route/addActivityRecord.dart';
 import 'package:provider/provider.dart';
 
 class MenteeActivityListRoute extends StatelessWidget {
-  final String menteeId;
+  final int menteeId;
 
   MenteeActivityListRoute(this.menteeId);
 
@@ -24,23 +24,32 @@ class MenteeActivityListRoute extends StatelessWidget {
             title: Text("CET Mentor Tracking App"),
           ),
           body: Center(
-            child: ListView.builder(
-              itemCount: model.activityRecordsForMenteeId(menteeId).length,
-              itemBuilder: (BuildContext context, int index) {
-                final record =
-                    model.activityRecordsForMenteeId(menteeId)[index];
+            child: FutureBuilder(
+                future: model.activityRecordsForMenteeId(menteeId),
+                builder:
+                    (context, AsyncSnapshot<List<ActivityRecord>> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final record = snapshot.data[index];
 
-                return Card(
-                  child: ListTile(
-                    leading: Icon(Icons.event_note),
-                    title: Text('${record.minutesSpent} ${record.notes}'),
-                    onLongPress: () {
-                      // NEEDSWORK: display context menu with delete option
-                    },
-                  ),
-                );
-              },
-            ),
+                        return Card(
+                          child: ListTile(
+                            leading: Icon(Icons.event_note),
+                            title:
+                                Text('${record.minutesSpent} ${record.notes}'),
+                            onLongPress: () {
+                              // NEEDSWORK: display context menu with delete option
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Text('Loading...');
+                  }
+                }),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
@@ -48,8 +57,8 @@ class MenteeActivityListRoute extends StatelessWidget {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AddActivityRecordRoute(
-                          model.menteeForMenteeId(menteeId))),
+                    builder: (context) => AddActivityRecordRoute(menteeId),
+                  ),
                 ),
                 model,
               );

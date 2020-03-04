@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mentor_tracking/dialog/addMentee.dart';
+import 'package:mentor_tracking/model/activity_record.dart';
+import 'package:mentor_tracking/model/mentee.dart';
 import 'package:mentor_tracking/model/model.dart';
 import 'package:mentor_tracking/route/menteeActivity.dart';
 import 'package:provider/provider.dart';
@@ -25,52 +27,71 @@ class _HomeRouteState extends State<HomeRoute> {
   Widget _widgetForCurrentState(MenteeModel model) {
     return (_selectedIndex <= 0)
         ? Scrollbar(
-            child: ListView.builder(
-              itemCount: model.mentees.length,
-              itemBuilder: (BuildContext context, int index) {
-                final mentee = model.mentees[index];
+            child: FutureBuilder(
+                future: model.mentees(),
+                builder: (context, AsyncSnapshot<List<Mentee>> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final mentee = snapshot.data[index];
 
-                return Card(
-                  child: ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text(
-                        '${mentee.firstName.trim()} ${mentee.lastName.trim()}'),
-                    subtitle: Text('${mentee.cellPhone}  ${mentee.email}'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                MenteeActivityListRoute(mentee.id)),
-                      );
-                    },
-                    onLongPress: () async {
-                      var editedMentee =
-                          await addOrEditMenteeDialog(context, mentee);
+                        return Card(
+                          child: ListTile(
+                            leading: Icon(Icons.person),
+                            title: Text(
+                                '${mentee.firstName.trim()} ${mentee.lastName.trim()}'),
+                            subtitle:
+                                Text('${mentee.cellPhone}  ${mentee.email}'),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        MenteeActivityListRoute(mentee.id)),
+                              );
+                            },
+                            onLongPress: () async {
+                              var editedMentee =
+                                  await addOrEditMenteeDialog(context, mentee);
 
-                      if (editedMentee != null) {
-                        model.editMentee(editedMentee);
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
+                              if (editedMentee != null) {
+                                model.editMentee(editedMentee);
+                              }
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Text('Loading...');
+                  }
+                }),
           )
         : Scrollbar(
-            child: ListView.builder(
-              itemCount: model.activityRecords.length,
-              itemBuilder: (BuildContext context, int index) {
-                final record = model.activityRecords[index];
+            child: FutureBuilder(
+                future: model.activityRecords(),
+                builder:
+                    (context, AsyncSnapshot<List<ActivityRecord>> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final record = snapshot.data[index];
 
-                return Card(
-                  child: ListTile(
-                    leading: Icon(Icons.event_note),
-                    title: Text('${record.minutesSpent} ${record.notes}'),
-                  ),
-                );
-              },
-            ),
+                        return Card(
+                          child: ListTile(
+                            leading: Icon(Icons.event_note),
+                            title:
+                                Text('${record.minutesSpent} ${record.notes}'),
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Text('Loading...');
+                  }
+                }),
           );
   }
 

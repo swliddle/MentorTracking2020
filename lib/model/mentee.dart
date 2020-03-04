@@ -1,5 +1,3 @@
-import 'package:mentor_tracking/model/activity_record.dart';
-
 class Mentee {
   static const kFieldId = "id";
   static const kFieldLastName = "lastName";
@@ -8,26 +6,20 @@ class Mentee {
   static const kFieldEmail = "email";
   static const kFieldActivityLog = "activityLog";
 
-  var id = "";
+  int id = 0;
   var lastName = "";
   var firstName = "";
   var cellPhone = "";
   var email = "";
-  var activityLog = List<ActivityRecord>();
 
-  Mentee(this.id, this.lastName, this.firstName, this.cellPhone, this.email,
-      this.activityLog);
+  Mentee(this.id, this.lastName, this.firstName, this.cellPhone, this.email);
 
-  Mentee.fromJson(Map<String, dynamic> json)
-      : this.id = json[kFieldId],
-        this.lastName = json[kFieldLastName],
-        this.firstName = json[kFieldFirstName],
-        this.cellPhone = json[kFieldCellPhone],
-        this.email = json[kFieldEmail] {
-    json[kFieldActivityLog].forEach((activityRecord) {
-      activityLog.add(ActivityRecord.fromJson(activityRecord));
-    });
-  }
+  Mentee.fromMap(Map<String, dynamic> map)
+      : this.id = map[kFieldId],
+        this.lastName = map[kFieldLastName],
+        this.firstName = map[kFieldFirstName],
+        this.cellPhone = map[kFieldCellPhone],
+        this.email = map[kFieldEmail];
 
   String getField(String fieldName) {
     switch (fieldName) {
@@ -44,12 +36,11 @@ class Mentee {
     return null;
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMap() => {
         kFieldId: id,
         kFieldLastName: lastName,
         kFieldFirstName: firstName,
         kFieldCellPhone: cellPhone,
         kFieldEmail: email,
-        kFieldActivityLog: activityLog,
       };
 }

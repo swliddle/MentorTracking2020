@@ -1,151 +1,146 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
+import 'package:mentor_tracking/model/database.dart';
 import 'package:mentor_tracking/model/mentee.dart';
+import 'package:mentor_tracking/model/uuid.dart';
 import 'package:mentor_tracking/utilities/performance_monitor.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MenteeModel extends ChangeNotifier {
-  static const kInitialDataPath = "assets/initial_data.json";
-  static const kDataPath = "data.json";
+  final Database database;
 
-  Database _database;
-  var _mentees = <Mentee>[];
+  MenteeModel(this.database);
 
-  MenteeModel() {
-    _getInitialData();
-  }
-
-  Future<File> get _dataFile async {
-    var docsPath = await _documentsPath;
-
-    return File('$docsPath/$kDataPath');
-  }
-
-  Future<String> get _documentsPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  void _openDatabase() async {
-    var dbPath = await getDatabasesPath();
-
-    print(dbPath);
-
-    _database = await openDatabase(
-      join(await getDatabasesPath(), 'mentoring.db'),
-      onCreate: (db, version) async {
-        await db.execute(
-          """
-          CREATE TABLE mentee(
-            id INTEGER PRIMARY KEY,
-            firstName TEXT,
-            lastName TEXT,
-            cellPhone TEXT,
-            email TEXT)
-          """,
-        );
-        return db.execute(
-          """
-          CREATE TABLE activityRecord(
-            id INTEGER PRIMARY KEY,
-            menteeId INTEGER,
-            date TEXT,
-            minutesSpent INTEGER,
-            notes TEXT)
-          """,
-        );
-      },
-      version: 1,
-    );
-  }
-
-  void _getInitialData() async {
-    _openDatabase();
-
-    var dataFile = await _dataFile;
-
-    if (dataFile.existsSync()) {
-      var jsonString = await dataFile.readAsString();
-      var jsonData = jsonDecode(jsonString);
-
-      jsonData.forEach((jsonObject) {
-        _mentees.add(Mentee.fromJson(jsonObject));
-      });
-
-      notifyListeners();
-    }
-  }
-
-  get mentees => _mentees;
-  get activityRecords => _mentees
-      .map((mentee) => mentee.activityLog)
-      .reduce((value, element) => value + element);
-
-  Mentee menteeForMenteeId(String menteeId) {
-    return _mentees.firstWhere((mentee) => mentee.id == menteeId);
-  }
-
-  List<ActivityRecord> activityRecordsForMenteeId(String menteeId) {
-    return _mentees.firstWhere((mentee) => mentee.id == menteeId).activityLog;
-  }
-
-  void addMentee(Mentee mentee) {
-    mentee.id = nextId();
-    _mentees.add(mentee);
-    notifyListeners();
-  }
-
-  void addActivityRecordForMentee(String menteeId, ActivityRecord record) {
-    _mentees
-        .firstWhere((mentee) => mentee.id == menteeId)
-        .activityLog
-        .add(record);
-    notifyListeners();
-  }
-
-  void editMentee(Mentee mentee) {
-    var editedMentee = _mentees.firstWhere((m) => m.id == mentee.id);
-
-    if (editedMentee != null) {
-      editedMentee.firstName = mentee.firstName;
-      editedMentee.lastName = mentee.lastName;
-      editedMentee.cellPhone = mentee.cellPhone;
-      editedMentee.email = mentee.email;
-    }
-
-    notifyListeners();
-  }
-
-  @override
-  void notifyListeners() {
-    super.notifyListeners();
-
-    saveMentees();
-  }
-
-  Future<void> saveMentees() async {
+  /*========================================================================
+   *                        CRUD METHODS
+   */
+  /*------------------------------------------------------------------------
+   *                        CREATE METHODS
+   */
+  Future<void> addMentee(Mentee mentee) async {
     var monitor = PerformanceMonitor();
-    final file = await _dataFile;
-    final data = jsonEncode(_mentees);
 
-    await file.writeAsString(jsonEncode(_mentees));
+    mentee.id = nextId();
+    await database.insert(
+      tableMentee,
+      mentee.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
 
-    print("saveMentees took ${monitor.timeElapsed().inMicroseconds}µs");
+    print("addMentee took ${monitor.timeElapsed().inMilliseconds}ms");
+
+    notifyListeners();
   }
 
-  // NEEDSWORK: implement delete
-}
+  void addActivityRecordForMentee(int menteeId, ActivityRecord record) async {
+    record.menteeId = menteeId;
+    await database.insert(
+      tableActivityRecord,
+      record.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
 
-int _nextIdValue = 10;
+    notifyListeners();
+  }
 
-String nextId() {
-  _nextIdValue += 1;
+  /*------------------------------------------------------------------------
+   *                        READ METHODS
+   */
+  Future<List<ActivityRecord>> activityRecords() async {
+    // Start by querying the table for all records, which come out as maps
+    final List<Map<String, dynamic>> maps =
+        await database.query(tableActivityRecord);
 
-  return _nextIdValue.toString();
+    // Then convert the list of maps to a list of objects
+    return List.generate(maps.length, (i) {
+      return ActivityRecord.fromMap(maps[i]);
+    });
+  }
+
+  Future<List<ActivityRecord>> activityRecordsForMenteeId(int id) async {
+    final List<Map<String, dynamic>> maps = await database.query(
+      tableActivityRecord,
+      where: "menteeId = ?",
+      whereArgs: [id],
+    );
+
+    return List.generate(maps.length, (i) {
+      return ActivityRecord.fromMap(maps[i]);
+    });
+  }
+
+  Future<List<Mentee>> mentees() async {
+    final List<Map<String, dynamic>> maps = await database.query(tableMentee);
+
+    return List.generate(maps.length, (i) {
+      return Mentee.fromMap(maps[i]);
+    });
+  }
+
+  Future<Mentee> menteeForId(int id) async {
+    final List<Map<String, dynamic>> maps = await database.query(
+      tableMentee,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    return List.generate(maps.length, (i) {
+      return Mentee.fromMap(maps[i]);
+    }).first;
+  }
+
+  /*------------------------------------------------------------------------
+   *                        UPDATE METHODS
+   */
+  Future<void> editActivityRecord(ActivityRecord record) async {
+    await database.update(
+      tableActivityRecord,
+      record.toMap(),
+      where: "id = ?",
+      whereArgs: [record.id],
+    );
+
+    notifyListeners();
+  }
+
+  Future<void> editMentee(Mentee mentee) async {
+    await database.update(
+      tableMentee,
+      mentee.toMap(),
+      where: "id = ?",
+      whereArgs: [mentee.id],
+    );
+
+    notifyListeners();
+  }
+
+  /*------------------------------------------------------------------------
+   *                        DELETE METHODS
+   */
+  Future<void> deleteActivityRecord(int id) async {
+    await database.delete(
+      tableActivityRecord,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    notifyListeners();
+  }
+
+  Future<void> deleteMentee(int id) async {
+    await database.delete(
+      tableMentee,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    // Don't forget to delete any linked activity records too
+    await database.delete(
+      tableActivityRecord,
+      where: "menteeId = ?",
+      whereArgs: [id],
+    );
+
+    notifyListeners();
+  }
 }
