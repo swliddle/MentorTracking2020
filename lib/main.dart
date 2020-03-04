@@ -26,6 +26,8 @@ class MyApp extends StatelessWidget {
               home: HomeRoute(title: 'CET Mentor Tracking App'),
             ),
           );
+        } else if (snapshot.hasError) {
+          // NEEDSWORK: display error message of some sort
         } else {
           return Container();
         }
