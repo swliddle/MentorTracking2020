@@ -33,35 +33,36 @@ class _HomeRouteState extends State<HomeRoute> {
                 future: model.mentees(),
                 builder: (context, AsyncSnapshot<List<Mentee>> snapshot) {
                   if (snapshot.hasData) {
-                    return ListView.builder(
+                    return ListView.separated(
+                      separatorBuilder: (context, index) => Divider(
+                        height: 1,
+                      ),
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index) {
                         final mentee = snapshot.data[index];
 
-                        return Card(
-                          child: ListTile(
-                            leading: Icon(Icons.person),
-                            title: Text(
-                                '${mentee.firstName.trim()} ${mentee.lastName.trim()}'),
-                            subtitle:
-                                Text('${mentee.cellPhone}  ${mentee.email}'),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        MenteeActivityListRoute(mentee.id)),
-                              );
-                            },
-                            onLongPress: () async {
-                              var editedMentee =
-                                  await addOrEditMenteeDialog(context, mentee);
+                        return ListTile(
+                          leading: Icon(Icons.person),
+                          title: Text(
+                              '${mentee.firstName.trim()} ${mentee.lastName.trim()}'),
+                          subtitle:
+                              Text('${mentee.cellPhone}  ${mentee.email}'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MenteeActivityListRoute(mentee.id)),
+                            );
+                          },
+                          onLongPress: () async {
+                            var editedMentee =
+                                await addOrEditMenteeDialog(context, mentee);
 
-                              if (editedMentee != null) {
-                                model.editMentee(editedMentee);
-                              }
-                            },
-                          ),
+                            if (editedMentee != null) {
+                              model.editMentee(editedMentee);
+                            }
+                          },
                         );
                       },
                     );
@@ -103,7 +104,7 @@ class _HomeRouteState extends State<HomeRoute> {
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-          elevation: 4,
+          elevation: 0,
         ),
         body: Center(
           child: _widgetForCurrentState(model),
@@ -121,7 +122,6 @@ class _HomeRouteState extends State<HomeRoute> {
           ],
           currentIndex: _selectedIndex,
           backgroundColor: bottomNavBackgroundColor,
-          elevation: bottomNavElevation,
           selectedItemColor: bottomNavSelectedItemColor,
           unselectedItemColor: bottomNavUnselectedItemColor,
           onTap: _onItemTapped,

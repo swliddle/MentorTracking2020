@@ -87,3 +87,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Sintony
+      fonts:
+        - asset: fonts/Sintony-Bold.ttf
+          weight: 700
+        - asset: fonts/Sintony-Regular.ttf
