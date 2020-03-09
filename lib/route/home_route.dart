@@ -136,6 +136,7 @@ class _HomeRouteState extends State<HomeRoute> {
             }
           },
           tooltip: 'Add Mentee',
+          elevation: 0,
           child: Icon(Icons.add),
         ),
       );

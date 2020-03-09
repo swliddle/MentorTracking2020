@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
             child: MaterialApp(
               title: 'CET Mentor Tracking',
               theme: themeData,
-              home: HomeRoute(title: 'CET Mentor Tracking App'),
+              home: HomeRoute(title: 'CET Mentor Tracking'),
             ),
           );
         } else if (snapshot.hasError) {
