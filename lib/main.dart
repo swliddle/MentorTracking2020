@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mentor_tracking/model/database.dart';
-import 'package:mentor_tracking/model/model.dart';
+import 'package:mentor_tracking/model/database_model.dart';
+import 'package:mentor_tracking/model/mentee_model.dart';
 import 'package:mentor_tracking/route/home_route.dart';
+import 'package:mentor_tracking/utilities/theme_data.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,12 +19,11 @@ class MyApp extends StatelessWidget {
       builder: (context, AsyncSnapshot<Database> snapshot) {
         if (snapshot.hasData) {
           return ChangeNotifierProvider(
-            create: (context) => MenteeModel(snapshot.data),
+            create: (context) =>
+                DatabaseMenteeModel(snapshot.data) as MenteeModel,
             child: MaterialApp(
               title: 'CET Mentor Tracking',
-              theme: ThemeData(
-                primarySwatch: Colors.lightGreen,
-              ),
+              theme: themeData,
               home: HomeRoute(title: 'CET Mentor Tracking App'),
             ),
           );

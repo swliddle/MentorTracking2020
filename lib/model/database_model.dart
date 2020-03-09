@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
 import 'package:mentor_tracking/model/database.dart';
 import 'package:mentor_tracking/model/mentee.dart';
+import 'package:mentor_tracking/model/mentee_model.dart';
 import 'package:mentor_tracking/model/uuid.dart';
 import 'package:mentor_tracking/utilities/performance_monitor.dart';
 import 'package:sqflite/sqflite.dart';
 
-class MenteeModel extends ChangeNotifier {
+class DatabaseMenteeModel extends MenteeModel {
   final Database database;
 
-  MenteeModel(this.database);
+  DatabaseMenteeModel(this.database);
 
   /*========================================================================
    *                        CRUD METHODS
@@ -29,7 +29,7 @@ class MenteeModel extends ChangeNotifier {
 
     print("addMentee took ${monitor.timeElapsed().inMilliseconds}ms");
 
-    notifyListeners();
+    super.addMentee(mentee);
   }
 
   void addActivityRecordForMentee(int menteeId, ActivityRecord record) async {
@@ -40,7 +40,7 @@ class MenteeModel extends ChangeNotifier {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    notifyListeners();
+    super.addActivityRecordForMentee(menteeId, record);
   }
 
   /*------------------------------------------------------------------------
@@ -100,7 +100,7 @@ class MenteeModel extends ChangeNotifier {
       whereArgs: [record.id],
     );
 
-    notifyListeners();
+    super.editActivityRecord(record);
   }
 
   Future<void> editMentee(Mentee mentee) async {
@@ -111,7 +111,7 @@ class MenteeModel extends ChangeNotifier {
       whereArgs: [mentee.id],
     );
 
-    notifyListeners();
+    super.editMentee(mentee);
   }
 
   /*------------------------------------------------------------------------
@@ -124,7 +124,7 @@ class MenteeModel extends ChangeNotifier {
       whereArgs: [id],
     );
 
-    notifyListeners();
+    super.deleteActivityRecord(id);
   }
 
   Future<void> deleteMentee(int id) async {
@@ -141,6 +141,6 @@ class MenteeModel extends ChangeNotifier {
       whereArgs: [id],
     );
 
-    notifyListeners();
+    super.deleteMentee(id);
   }
 }

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mentor_tracking/dialog/addMentee.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
 import 'package:mentor_tracking/model/mentee.dart';
-import 'package:mentor_tracking/model/model.dart';
+import 'package:mentor_tracking/model/database_model.dart';
+import 'package:mentor_tracking/model/mentee_model.dart';
 import 'package:mentor_tracking/route/menteeActivity.dart';
+import 'package:mentor_tracking/utilities/theme_data.dart';
 import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -101,6 +103,7 @@ class _HomeRouteState extends State<HomeRoute> {
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
+          elevation: 4,
         ),
         body: Center(
           child: _widgetForCurrentState(model),
@@ -117,9 +120,10 @@ class _HomeRouteState extends State<HomeRoute> {
             ),
           ],
           currentIndex: _selectedIndex,
-          backgroundColor: Colors.lightGreen[200],
-          selectedItemColor: Colors.grey[900],
-          unselectedItemColor: Colors.grey[500],
+          backgroundColor: bottomNavBackgroundColor,
+          elevation: bottomNavElevation,
+          selectedItemColor: bottomNavSelectedItemColor,
+          unselectedItemColor: bottomNavUnselectedItemColor,
           onTap: _onItemTapped,
         ),
         floatingActionButton: FloatingActionButton(
