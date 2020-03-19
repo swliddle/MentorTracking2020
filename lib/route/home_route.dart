@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mentor_tracking/dialog/addMentee.dart';
+import 'package:mentor_tracking/dialog/add_mentee.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
 import 'package:mentor_tracking/model/mentee.dart';
 import 'package:mentor_tracking/model/mentee_model.dart';
-import 'package:mentor_tracking/route/menteeActivity.dart';
+import 'package:mentor_tracking/route/mentee_activity.dart';
 import 'package:mentor_tracking/utilities/theme_data.dart';
+import 'package:mentor_tracking/widget/app_bar.dart';
 import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -25,14 +26,16 @@ class _HomeRouteState extends State<HomeRoute> {
         builder: (context, AsyncSnapshot<List<ActivityRecord>> snapshot) {
           if (snapshot.hasData) {
             return ListView.separated(
-              separatorBuilder: (context, index) => Divider(height: 1),
+              separatorBuilder: (context, index) => Divider(height: 0),
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
                 final record = snapshot.data[index];
 
                 return ListTile(
                   leading: Icon(Icons.event_note),
-                  title: Text('${record.minutesSpent} ${record.notes}'),
+                  title: Text(
+                    '${record.minutesSpent} ${record.notes}',
+                  ),
                 );
               },
             );
@@ -42,47 +45,85 @@ class _HomeRouteState extends State<HomeRoute> {
         });
   }
 
+  Widget _bottomNavigationBar() {
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          title: Text('Mentees'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.event_note),
+          title: Text('Activity'),
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      backgroundColor: bottomNavBackgroundColor,
+      selectedItemColor: bottomNavSelectedItemColor,
+      unselectedItemColor: bottomNavUnselectedItemColor,
+      onTap: _onItemTapped,
+    );
+  }
+
+  Widget _conditionalFloatingActionButton(
+      BuildContext context, MenteeModel model) {
+    return AnimatedOpacity(
+      opacity: _selectedIndex <= 0 ? 1.0 : 0.0,
+      duration: Duration(milliseconds: 150),
+      child: FloatingActionButton(
+        onPressed: () async {
+          if (_selectedIndex <= 0) {
+            var mentee = await addOrEditMenteeDialog(context);
+
+            if (mentee != null) {
+              model.addMentee(mentee);
+            }
+          }
+        },
+        tooltip: 'Add Mentee',
+        elevation: 0,
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+
   Widget _menteeList(BuildContext context, MenteeModel model) {
     return FutureBuilder(
         future: model.mentees(),
         builder: (context, AsyncSnapshot<List<Mentee>> snapshot) {
           if (snapshot.hasData) {
             return ListView.separated(
-              separatorBuilder: (context, index) => Divider(
-                height: 1,
-              ),
+              separatorBuilder: (context, index) => Divider(height: 0),
               itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                final mentee = snapshot.data[index];
-
-                return ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text(
-                      '${mentee.firstName.trim()} ${mentee.lastName.trim()}'),
-                  subtitle: Text('${mentee.cellPhone}  ${mentee.email}'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MenteeActivityListRoute(mentee.id)),
-                    );
-                  },
-                  onLongPress: () async {
-                    var editedMentee =
-                        await addOrEditMenteeDialog(context, mentee);
-
-                    if (editedMentee != null) {
-                      model.editMentee(editedMentee);
-                    }
-                  },
-                );
-              },
+              itemBuilder: (BuildContext context, int index) =>
+                  _menteeTile(context, model, snapshot.data[index]),
             );
           } else {
             return Text('Loading...');
           }
         });
+  }
+
+  Widget _menteeTile(BuildContext context, MenteeModel model, Mentee mentee) {
+    return ListTile(
+      leading: Icon(Icons.person),
+      title: Text('${mentee.firstName.trim()} ${mentee.lastName.trim()}'),
+      subtitle: Text('${mentee.cellPhone}  ${mentee.email}'),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MenteeActivityListRoute(mentee.id)),
+        );
+      },
+      onLongPress: () async {
+        var editedMentee = await addOrEditMenteeDialog(context, mentee);
+
+        if (editedMentee != null) {
+          model.editMentee(editedMentee);
+        }
+      },
+    );
   }
 
   void _onItemTapped(int index) {
@@ -103,42 +144,12 @@ class _HomeRouteState extends State<HomeRoute> {
   Widget build(BuildContext context) {
     return Consumer<MenteeModel>(builder: (context, model, child) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          elevation: 0,
-        ),
+        appBar: mentoringAppBar(context, widget.title),
         body: Center(
           child: _widgetForCurrentState(model),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Text('Mentees'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_note),
-              title: Text('Activity'),
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          backgroundColor: bottomNavBackgroundColor,
-          selectedItemColor: bottomNavSelectedItemColor,
-          unselectedItemColor: bottomNavUnselectedItemColor,
-          onTap: _onItemTapped,
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            var mentee = await addOrEditMenteeDialog(context);
-
-            if (mentee != null) {
-              model.addMentee(mentee);
-            }
-          },
-          tooltip: 'Add Mentee',
-          elevation: 0,
-          child: Icon(Icons.add),
-        ),
+        bottomNavigationBar: _bottomNavigationBar(),
+        floatingActionButton: _conditionalFloatingActionButton(context, model),
       );
     });
   }

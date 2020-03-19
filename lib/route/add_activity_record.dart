@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
 import 'package:mentor_tracking/model/mentee.dart';
-import 'package:mentor_tracking/model/database_model.dart';
 import 'package:mentor_tracking/model/mentee_model.dart';
+import 'package:mentor_tracking/widget/app_bar.dart';
 import 'package:provider/provider.dart';
 
 class AddActivityRecordRoute extends StatefulWidget {
@@ -66,9 +66,7 @@ class _AddActivityRecordRouteState extends State<AddActivityRecordRoute> {
 
   Widget _editForm(String title) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: mentoringAppBar(context, title),
       body: ListView(
         padding: const EdgeInsets.all(8),
         children: <Widget>[

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
-import 'package:mentor_tracking/model/database_model.dart';
 import 'package:mentor_tracking/model/mentee_model.dart';
-import 'package:mentor_tracking/route/addActivityRecord.dart';
+import 'package:mentor_tracking/route/add_activity_record.dart';
+import 'package:mentor_tracking/widget/app_bar.dart';
 import 'package:provider/provider.dart';
 
 class MenteeActivityListRoute extends StatelessWidget {
@@ -21,9 +21,7 @@ class MenteeActivityListRoute extends StatelessWidget {
     return Consumer<MenteeModel>(
       builder: (context, model, child) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text("CET Mentor Tracking App"),
-          ),
+          appBar: mentoringAppBar(context, "CET Mentor Tracking App"),
           body: Center(
             child: FutureBuilder(
                 future: model.activityRecordsForMenteeId(menteeId),
