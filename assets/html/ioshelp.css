@@ -1,0 +1,213 @@
+:root {
+    color-scheme: light dark;
+    --sci-background-color: #fff;
+    --sci-dim-background-color: #f0f0f0;
+    --sci-secondary-background-color: #f0e4da;
+    --sci-tertiary-background-color: #282828;
+    --sci-darker-background-color: #e0e0e0;
+    --sci-text-color: #111;
+    --sci-bright-text-color: #000;
+    --sci-dim-text-color: #202020;
+    --sci-link-color: #101060;
+    --sci-link-active-color: #101060;
+    --sci-alink-color: #101060;
+    --sci-border-color: #aaa;
+    --sci-table-border-color: #000;
+    --sci-th-background-color: lightblue;
+    --sci-hero-background-color: #fff;
+    --sci-button-background-color: #f0e4da;
+    --sci-button-border-color: #aaa;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --sci-background-color: #000;
+        --sci-dim-background-color: #222;
+        --sci-secondary-background-color: #333;
+        --sci-tertiary-background-color: #282828;
+        --sci-darker-background-color: #222;
+        --sci-text-color: #b0b0b0;
+        --sci-bright-text-color: #b0b0b0;
+        --sci-dim-text-color: #b0b0b0;
+        --sci-link-color: #b0b0ff;
+        --sci-link-active-color: #ffb0b0;
+        --sci-alink-color: #b0b0b0;
+        --sci-border-color: #000;
+        --sci-table-border-color: #aaa;
+        --sci-th-background-color: #444;
+        --sci-hero-background-color: #444;
+        --sci-button-background-color: #222;
+        --sci-button-border-color: #888;
+    }
+}
+
+body {
+    margin-left: 18px;
+    margin-right: 18px;
+    margin-top: 0px;
+    color: var(--sci-text-color);
+    background-color: var(--sci-background-color);
+    font: -apple-system-body;
+}
+
+img {
+    text-align: center;
+}
+
+h1 {
+    font-size: 20px;
+    text-align: center;
+}
+
+h2 {
+    font: -apple-system-headline;
+    text-align: center;
+}
+
+h2.sect {
+    background-color: var(--sci-secondary-background-color);
+    font: -apple-system-headline;
+    margin-left: -18px;
+    margin-right: -18px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-repeat: repeat-x;
+}
+
+h3 {
+    text-align: center;
+    font: -apple-system-subhead;
+    font-weight: normal;
+    font-size: smaller;
+    color: var(--sci-bright-text-color);
+}
+
+a:link, a:visited {
+    color: var(--sci-link-color);
+}
+
+a:active, a:hover {
+    color: var(--sci-link-active-color);
+}
+
+table, th, td {
+    border: 1px solid var(--sci-table-border-color);
+}
+
+table {
+    color: var(--sci-bright-text-color);
+    background-color: var(--sci-darker-background-color);
+    border-collapse: collapse;
+}
+
+th {
+    background-color: var(--sci-th-background-color);
+}
+
+td {
+    vertical-align: top;
+    padding-left: .4em;
+    padding-right: .4em;
+}
+
+div.list {
+    padding: 4px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border: 1px solid var(--sci-table-border-color);
+    background-color: var(--sci-dim-background-color);
+    color: var(--sci-dim-text-color);
+}
+
+a.button, a.button:visited {
+    display: inline-block;
+    background-color: var(--sci-button-background-color);
+    width: 100px;
+    height: 26px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    border: 1px solid var(--sci-button-border-color);
+    font: -apple-system-body;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    color: var(--sci-bright-text-color);
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+div.alink {
+    display: block;
+    width: 100px;
+    height: 31px;
+    color: var(--sci-background-color);
+}
+
+div.alink a {
+    color: var(--sci-alink-color);
+}
+
+#banner {
+    background-color: var(--sci-hero-background-color);
+    background-image: url('wood_768.png');
+    background-repeat: repeat-x;
+    margin-left: -18px;
+    margin-right: -18px;
+    margin-top: 0;
+    margin-bottom: 0;
+    text-align: center;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.syncImg {
+    background-image: url('sync_17@2x.png');
+    background-size: cover;
+}
+
+@media (prefers-color-scheme: dark) {
+    #banner {
+        background-image: url('wood_768_night.png');
+    }
+
+    .syncImg {
+        background-image: url('sync_17@2x_night.png');
+        background-size: cover;
+    }
+}
+
+#btitle {
+    background-color: var(--sci-tertiary-background-color);
+    margin-left: -18px;
+    margin-right: -18px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+@media screen and (max-device-width: 480px) {
+    .bannerImg {
+        width: 320px;
+        height: 104px;
+    }
+
+    .bannerTitleImg {
+        width: 246px;
+        height: 21px;
+    }
+}
+
+@media screen and (min-device-width: 481px) {
+    .bannerImg {
+        width: 703px;
+        height: 229px;
+    }
+
+    .bannerTitleImg {
+        width: 541px;
+        height: 47px;
+    }
+}

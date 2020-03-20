@@ -62,6 +62,31 @@ flutter:
   # assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
+  assets:
+    - assets/html/ioshelp.html
+    - assets/html/ioshelp.css
+    - assets/html/blank.png
+    - assets/html/hbll_17_night.png
+    - assets/html/hbll_17.png
+    - assets/html/hbll_night.png
+    - assets/html/hbll.png
+    - assets/html/pdf_17_night.png
+    - assets/html/pdf_17.png
+    - assets/html/pdf_night.png
+    - assets/html/pdf.png
+    - assets/html/sync_17_night.png
+    - assets/html/sync_17.png
+    - assets/html/sync_17@2x_night.png
+    - assets/html/sync_17@2x.png
+    - assets/html/sync_night.png
+    - assets/html/sync.png
+    - assets/html/sync@2x_night.png
+    - assets/html/sync@2x.png
+    - assets/html/wood_768_night.png
+    - assets/html/wood_768.png
+    - assets/html/Banner-703.png
+    - assets/html/Banner-703_night.png
+    - assets/html/CitationIndexTitle.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
