@@ -9,7 +9,7 @@ class WebRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: mentoringAppBar(context, "Web View Demo"),
+      appBar: mentoringAppBar(context, "Web View Demo", hideWebAction: true),
       body: Center(
         child: Container(
           child: FutureBuilder<String>(
