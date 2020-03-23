@@ -48,10 +48,9 @@ class HtmlHelper {
     var matches = regexp.allMatches(html).toList();
 
     if (matches.isNotEmpty) {
-      matches.forEach((match) {
-        print("Cache ${match[1]}");
-        _cacheImage(context, match[1]);
-      });
+      for (int i = 0; i < matches.length; i++) {
+        await _cacheImage(context, matches[i][1]);
+      }
     }
 
     _cachedImages.forEach((key, encodedImage) {
@@ -126,7 +125,6 @@ class HtmlHelper {
 
   static Future<String> _inlineImage(
       BuildContext context, String imageName) async {
-    print("Inline $imageName");
     var imageData =
         await DefaultAssetBundle.of(context).load('assets/html/$imageName');
     var imageInts = imageData.buffer
