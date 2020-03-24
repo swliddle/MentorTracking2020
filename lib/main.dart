@@ -8,8 +8,6 @@ import 'package:mentor_tracking/utilities/theme_data.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-CameraDescription mainCamera;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -19,21 +17,35 @@ void main() async {
   // Get a specific camera from the list of available cameras.
   final firstCamera = cameras.first;
 
-  mainCamera = firstCamera;
-
-  return runApp(MyApp());
+  return runApp(MyApp(firstCamera));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  final mainCamera;
+
+  MyApp(this.mainCamera);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: openMentoringDatabase(),
       builder: (context, AsyncSnapshot<Database> snapshot) {
         if (snapshot.hasData) {
-          return ChangeNotifierProvider(
-            create: (context) =>
-                DatabaseMenteeModel(snapshot.data) as MenteeModel,
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                create: (context) =>
+                    DatabaseMenteeModel(snapshot.data) as MenteeModel,
+              ),
+              Provider<CameraDescription>(
+                create: (context) => widget.mainCamera,
+              )
+            ],
             child: MaterialApp(
               title: 'CET Mentor Tracking',
               theme: themeData,

@@ -1,10 +1,12 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:mentor_tracking/main.dart';
 import 'package:mentor_tracking/route/camera_route.dart';
 import 'package:mentor_tracking/route/web_route.dart';
 
 AppBar mentoringAppBar(BuildContext context, String title,
-    {hideWebAction = false, hideCameraAction = false}) {
+    {hideWebAction = false,
+    hideCameraAction = false,
+    CameraDescription camera}) {
   final actions = <Widget>[];
 
   if (!hideWebAction) {
@@ -30,7 +32,7 @@ AppBar mentoringAppBar(BuildContext context, String title,
             context,
             MaterialPageRoute(
               builder: (context) => CameraRoute(
-                camera: mainCamera,
+                camera: camera,
               ),
             ),
           );

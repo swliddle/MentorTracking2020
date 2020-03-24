@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:mentor_tracking/dialog/add_mentee.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
@@ -142,15 +143,18 @@ class _HomeRouteState extends State<HomeRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MenteeModel>(builder: (context, model, child) {
-      return Scaffold(
-        appBar: mentoringAppBar(context, widget.title),
-        body: Center(
-          child: _widgetForCurrentState(model),
-        ),
-        bottomNavigationBar: _bottomNavigationBar(),
-        floatingActionButton: _conditionalFloatingActionButton(context, model),
-      );
+    return Consumer<CameraDescription>(builder: (context, camera, child) {
+      return Consumer<MenteeModel>(builder: (context, model, child) {
+        return Scaffold(
+          appBar: mentoringAppBar(context, widget.title, camera: camera),
+          body: Center(
+            child: _widgetForCurrentState(model),
+          ),
+          bottomNavigationBar: _bottomNavigationBar(),
+          floatingActionButton:
+              _conditionalFloatingActionButton(context, model),
+        );
+      });
     });
   }
 }
