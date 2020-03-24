@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:mentor_tracking/route/display_picture_route.dart';
 import 'package:mentor_tracking/widget/app_bar.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 
 class CameraRoute extends StatefulWidget {
   final CameraDescription camera;
@@ -25,6 +23,45 @@ class CameraRouteState extends State<CameraRoute> {
   CameraController _controller;
   Future<void> _initializeControllerFuture;
 
+  Widget _takePhotoFloatingActionButton(BuildContext context) {
+    return FloatingActionButton(
+      child: Icon(Icons.camera_alt),
+      // Provide an onPressed callback.
+      onPressed: () async {
+        // Take the Picture in a try / catch block. If anything goes wrong,
+        // catch the error.
+        try {
+          // Ensure that the camera is initialized.
+          await _initializeControllerFuture;
+
+          // Construct the path where the image should be saved using the path
+          // package.
+          final path = join(
+            // Store the picture in the temp directory.
+            // Find the temp directory using the `path_provider` plugin.
+            (await getTemporaryDirectory()).path,
+            '${DateTime.now()}.png',
+          );
+
+          // Attempt to take a picture and log where it's been saved.
+          await _controller.takePicture(path);
+
+          // If the picture was taken, display it on a new screen.
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DisplayPictureRoute(imagePath: path),
+            ),
+          );
+        } catch (e) {
+          // If an error occurs, log the error to the console.
+          // NEEDSWORK: A snackbar message would be better.
+          print(e);
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -33,9 +70,11 @@ class CameraRouteState extends State<CameraRoute> {
     // create a CameraController.
     _controller = CameraController(
       // Get a specific camera from the list of available cameras.
+      // NEEDSWORK: You might want to let the user choose a camera.
       widget.camera,
 
       // Define the resolution to use.
+      // NEEDSWORK: You probably want to give the user some control over this.
       ResolutionPreset.medium,
     );
 
@@ -52,75 +91,20 @@ class CameraRouteState extends State<CameraRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CameraDescription>(builder: (context, camera, child) {
-      return Scaffold(
-        appBar:
-            mentoringAppBar(context, "Take a Photo", hideCameraAction: true, camera: camera),
-        body: FutureBuilder<void>(
-          future: _initializeControllerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If the Future is complete, display the preview.
-              return CameraPreview(_controller);
-            } else {
-              // Otherwise, display a loading indicator.
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.camera_alt),
-          // Provide an onPressed callback.
-          onPressed: () async {
-            // Take the Picture in a try / catch block. If anything goes wrong,
-            // catch the error.
-            try {
-              // Ensure that the camera is initialized.
-              await _initializeControllerFuture;
-
-              // Construct the path where the image should be saved using the path
-              // package.
-              final path = join(
-                // Store the picture in the temp directory.
-                // Find the temp directory using the `path_provider` plugin.
-                (await getTemporaryDirectory()).path,
-                '${DateTime.now()}.png',
-              );
-
-              // Attempt to take a picture and log where it's been saved.
-              await _controller.takePicture(path);
-
-              // If the picture was taken, display it on a new screen.
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DisplayPictureScreen(imagePath: path),
-                ),
-              );
-            } catch (e) {
-              // If an error occurs, log the error to the console.
-              print(e);
-            }
-          },
-        ),
-      );
-    });
-  }
-}
-
-// A widget that displays the picture taken by the user.
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Your Photo')),
-      // The image is stored as a file on the device. Use the `Image.file`
-      // constructor with the given path to display the image.
-      body: Image.file(File(imagePath)),
+      appBar: mentoringAppBar(context, "Take a Photo",
+          hideCameraAction: true, camera: widget.camera),
+      body: FutureBuilder<void>(
+        future: _initializeControllerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CameraPreview(_controller);
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+      floatingActionButton: _takePhotoFloatingActionButton(context),
     );
   }
 }

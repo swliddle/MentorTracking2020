@@ -24,7 +24,7 @@ class WebRoute extends StatelessWidget {
                     javascriptMode: JavascriptMode.unrestricted,
                   );
                 } else {
-                  return Text("Loading...");
+                  return Center(child: CircularProgressIndicator());
                 }
               }),
         ),
