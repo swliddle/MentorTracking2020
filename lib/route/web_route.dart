@@ -16,12 +16,23 @@ class WebRoute extends StatelessWidget {
               future: HtmlHelper.inlineHtmlAsset(context, "ioshelp.html"),
               builder: (context, AsyncSnapshot<String> snapshot) {
                 if (snapshot.hasData) {
-                  return WebView(
-                    initialUrl: Uri.dataFromString(snapshot.data,
-                            mimeType: 'text/html',
-                            encoding: Encoding.getByName('utf-8'))
-                        .toString(),
-                    javascriptMode: JavascriptMode.unrestricted,
+                  return GestureDetector(
+                    onPanUpdate: (details) {
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(details.delta.dx > 0
+                              ? "Swipe right"
+                              : "Swipe left"),
+                        ),
+                      );
+                    },
+                    child: WebView(
+                      initialUrl: Uri.dataFromString(snapshot.data,
+                              mimeType: 'text/html',
+                              encoding: Encoding.getByName('utf-8'))
+                          .toString(),
+                      javascriptMode: JavascriptMode.unrestricted,
+                    ),
                   );
                 } else {
                   return Center(child: CircularProgressIndicator());
