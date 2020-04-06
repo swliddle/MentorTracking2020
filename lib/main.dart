@@ -4,6 +4,7 @@ import 'package:mentor_tracking/model/database.dart';
 import 'package:mentor_tracking/model/database_model.dart';
 import 'package:mentor_tracking/model/mentee_model.dart';
 import 'package:mentor_tracking/route/home_route.dart';
+import 'package:mentor_tracking/route/mentee_activity.dart';
 import 'package:mentor_tracking/utilities/theme_data.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -49,11 +50,19 @@ class _MyAppState extends State<MyApp> {
             child: MaterialApp(
               title: 'CET Mentor Tracking',
               theme: themeData,
-              home: HomeRoute(title: 'CET Mentor Tracking'),
+              initialRoute: '/',
+              routes: {
+                '/': (context) => HomeRoute(title: 'CET Mentor Tracking'),
+                '/mentee_activity': (context) => MenteeActivityListRoute(1),
+              },
             ),
           );
         } else if (snapshot.hasError) {
-          // NEEDSWORK: display error message of some sort
+          return Container(
+            child: Center(
+              child: Text('Unable to open database.'),
+            ),
+          );
         } else {
           return Container();
         }

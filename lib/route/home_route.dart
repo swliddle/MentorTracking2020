@@ -151,6 +151,58 @@ class _HomeRouteState extends State<HomeRoute> {
             child: _widgetForCurrentState(model),
           ),
           bottomNavigationBar: _bottomNavigationBar(),
+          drawer: Drawer(
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        width: 50.0,
+                        height: 50.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.contain,
+                            image:
+                                Image.asset('assets/launcher/icon.png').image,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text('Steve Liddle'),
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.lightGreen,
+                  ),
+                ),
+                ListTile(
+                  title: Text('Recent Mentees'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/recent_mentees');
+                  },
+                ),
+                ListTile(
+                  title: Text('All Mentees'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/');
+                  },
+                ),
+                ListTile(
+                  title: Text('My Profile'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/profile');
+                  },
+                ),
+              ],
+            ),
+          ),
           floatingActionButton:
               _conditionalFloatingActionButton(context, model),
         );

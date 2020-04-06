@@ -89,6 +89,7 @@ flutter:
     - assets/html/Banner-703.png
     - assets/html/Banner-703_night.png
     - assets/html/CitationIndexTitle.png
+    - assets/launcher/icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
