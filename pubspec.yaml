@@ -20,6 +20,7 @@ dependencies:
   flutter:
     sdk: flutter
   camera: ^0.5.7+4
+  flutter_local_notifications: ^1.4.0
   intl: ^0.16.1
   path: ^1.6.4
   path_provider: ^1.6.1

@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mentor_tracking/model/database.dart';
 import 'package:mentor_tracking/model/database_model.dart';
 import 'package:mentor_tracking/model/mentee_model.dart';
@@ -8,6 +9,32 @@ import 'package:mentor_tracking/route/mentee_activity.dart';
 import 'package:mentor_tracking/utilities/theme_data.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+
+Future<FlutterLocalNotificationsPlugin> initializeNotifications() async {
+  final FlutterLocalNotificationsPlugin plugin =
+      FlutterLocalNotificationsPlugin();
+
+  var initializationSettingsAndroid =
+      AndroidInitializationSettings('ic_launcher');
+  var initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {
+        // NEEDSWORK
+      });
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await plugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+  });
+
+  return plugin;
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,13 +45,16 @@ void main() async {
   // Get a specific camera from the list of available cameras.
   final firstCamera = cameras.isNotEmpty ? cameras.first : null;
 
-  return runApp(MyApp(firstCamera));
+  final notificationsPlugin = await initializeNotifications();
+
+  return runApp(MyApp(firstCamera, notificationsPlugin));
 }
 
 class MyApp extends StatefulWidget {
   final mainCamera;
+  final notificationsPlugin;
 
-  MyApp(this.mainCamera);
+  MyApp(this.mainCamera, this.notificationsPlugin);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -45,6 +75,9 @@ class _MyAppState extends State<MyApp> {
               ),
               Provider<CameraDescription>(
                 create: (context) => widget.mainCamera,
+              ),
+              Provider<FlutterLocalNotificationsPlugin>(
+                create: (context) => widget.notificationsPlugin,
               )
             ],
             child: MaterialApp(

@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mentor_tracking/dialog/add_mentee.dart';
 import 'package:mentor_tracking/model/activity_record.dart';
 import 'package:mentor_tracking/model/mentee.dart';
@@ -133,6 +134,28 @@ class _HomeRouteState extends State<HomeRoute> {
     });
   }
 
+  void _showNotification(FlutterLocalNotificationsPlugin plugin) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        '2020Message',
+        'Mentoring Messages',
+        'Notifications related to the Rollins Center Mentor Tracking app go here.',
+        importance: Importance.Default,
+        priority: Priority.Default,
+        ticker: 'CET Mentor Tracking');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await plugin.show(123, "Sample Notification",
+        "Thanks for using MentorTracking2020", platformChannelSpecifics);
+
+    var pendingRequests = await plugin.pendingNotificationRequests();
+
+    print("There are ${pendingRequests.length} pending requests.");
+    pendingRequests.forEach((request) {
+      print(request);
+    });
+  }
+
   Widget _widgetForCurrentState(MenteeModel model) {
     return Scrollbar(
       child: (_selectedIndex <= 0)
@@ -143,69 +166,73 @@ class _HomeRouteState extends State<HomeRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CameraDescription>(builder: (context, camera, child) {
-      return Consumer<MenteeModel>(builder: (context, model, child) {
-        return Scaffold(
-          appBar: mentoringAppBar(context, widget.title, camera: camera),
-          body: Center(
-            child: _widgetForCurrentState(model),
-          ),
-          bottomNavigationBar: _bottomNavigationBar(),
-          drawer: Drawer(
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        width: 50.0,
-                        height: 50.0,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.contain,
-                            image:
-                                Image.asset('assets/launcher/icon.png').image,
+    return Consumer<FlutterLocalNotificationsPlugin>(
+        builder: (context, notificationsPlugin, child) {
+      return Consumer<CameraDescription>(builder: (context, camera, child) {
+        return Consumer<MenteeModel>(builder: (context, model, child) {
+          return Scaffold(
+            appBar: mentoringAppBar(context, widget.title, camera: camera),
+            body: Center(
+              child: _widgetForCurrentState(model),
+            ),
+            bottomNavigationBar: _bottomNavigationBar(),
+            drawer: Drawer(
+              child: ListView(
+                // Important: Remove any padding from the ListView.
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  DrawerHeader(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: 50.0,
+                          height: 50.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.contain,
+                              image:
+                                  Image.asset('assets/launcher/icon.png').image,
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text('Steve Liddle'),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text('Steve Liddle'),
+                        ),
+                      ],
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.lightGreen,
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    color: Colors.lightGreen,
+                  ListTile(
+                    title: Text('Recent Mentees'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/recent_mentees');
+                    },
                   ),
-                ),
-                ListTile(
-                  title: Text('Recent Mentees'),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/recent_mentees');
-                  },
-                ),
-                ListTile(
-                  title: Text('All Mentees'),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/');
-                  },
-                ),
-                ListTile(
-                  title: Text('My Profile'),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/profile');
-                  },
-                ),
-              ],
+                  ListTile(
+                    title: Text('All Mentees'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('My Profile'),
+                    onTap: () {
+//                      Navigator.pushNamed(context, '/profile');
+                      _showNotification(notificationsPlugin);
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-          floatingActionButton:
-              _conditionalFloatingActionButton(context, model),
-        );
+            floatingActionButton:
+                _conditionalFloatingActionButton(context, model),
+          );
+        });
       });
     });
   }
