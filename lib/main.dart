@@ -14,8 +14,7 @@ Future<FlutterLocalNotificationsPlugin> initializeNotifications() async {
   final FlutterLocalNotificationsPlugin plugin =
       FlutterLocalNotificationsPlugin();
 
-  var initializationSettingsAndroid =
-      AndroidInitializationSettings('ic_launcher');
+  var initializationSettingsAndroid = AndroidInitializationSettings('mentor');
   var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -23,11 +22,14 @@ Future<FlutterLocalNotificationsPlugin> initializeNotifications() async {
       onDidReceiveLocalNotification:
           (int id, String title, String body, String payload) async {
         // NEEDSWORK
+        print(
+            "Received local notification ${id}, ${title}, ${body}, ${payload}");
       });
   var initializationSettings = InitializationSettings(
       initializationSettingsAndroid, initializationSettingsIOS);
   await plugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
+    print("onSelectNotification");
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }

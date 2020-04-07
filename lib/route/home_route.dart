@@ -135,24 +135,48 @@ class _HomeRouteState extends State<HomeRoute> {
   }
 
   void _showNotification(FlutterLocalNotificationsPlugin plugin) async {
+    await plugin.cancelAll();
+
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         '2020Message',
         'Mentoring Messages',
         'Notifications related to the Rollins Center Mentor Tracking app go here.',
-        importance: Importance.Default,
-        priority: Priority.Default,
+        importance: Importance.Max,
+        priority: Priority.High,
         ticker: 'CET Mentor Tracking');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await plugin.show(123, "Sample Notification",
-        "Thanks for using MentorTracking2020", platformChannelSpecifics);
+    await plugin.show(
+      123,
+      "Sample Notification",
+      "Thanks for using MentorTracking2020",
+      platformChannelSpecifics,
+      payload: "123",
+    );
 
     var pendingRequests = await plugin.pendingNotificationRequests();
 
     print("There are ${pendingRequests.length} pending requests.");
     pendingRequests.forEach((request) {
-      print(request);
+      print(request.title);
+    });
+
+    await plugin.schedule(
+      124,
+      'Scheduled Notification',
+      'Thanks for using MentorTracking2020',
+      DateTime.now().add(Duration(seconds: 5)),
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      payload: "124",
+    );
+
+    pendingRequests = await plugin.pendingNotificationRequests();
+
+    print("There are ${pendingRequests.length} pending requests.");
+    pendingRequests.forEach((request) {
+      print("${request.id}, ${request.title}, ${request.body}");
     });
   }
 
