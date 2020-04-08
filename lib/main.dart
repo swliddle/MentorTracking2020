@@ -4,6 +4,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mentor_tracking/model/database.dart';
 import 'package:mentor_tracking/model/database_model.dart';
 import 'package:mentor_tracking/model/mentee_model.dart';
+import 'package:mentor_tracking/model/preferences.dart';
+import 'package:mentor_tracking/route/configure_daily_notifications.dart';
 import 'package:mentor_tracking/route/home_route.dart';
 import 'package:mentor_tracking/route/mentee_activity.dart';
 import 'package:mentor_tracking/utilities/theme_data.dart';
@@ -80,7 +82,12 @@ class _MyAppState extends State<MyApp> {
               ),
               Provider<FlutterLocalNotificationsPlugin>(
                 create: (context) => widget.notificationsPlugin,
-              )
+              ),
+              Provider<Preferences>(
+                create: (context) {
+                  return Preferences();
+                },
+              ),
             ],
             child: MaterialApp(
               title: 'CET Mentor Tracking',
@@ -89,6 +96,7 @@ class _MyAppState extends State<MyApp> {
               routes: {
                 '/': (context) => HomeRoute(title: 'CET Mentor Tracking'),
                 '/mentee_activity': (context) => MenteeActivityListRoute(1),
+                '/reminders': (context) => ConfigureNotificationsRoute(),
               },
             ),
           );

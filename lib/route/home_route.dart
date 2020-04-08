@@ -166,7 +166,7 @@ class _HomeRouteState extends State<HomeRoute> {
       124,
       'Scheduled Notification',
       'Thanks for using MentorTracking2020',
-      DateTime.now().add(Duration(seconds: 5)),
+      DateTime.now().add(Duration(seconds: 20)),
       platformChannelSpecifics,
       androidAllowWhileIdle: true,
       payload: "124",
@@ -241,6 +241,12 @@ class _HomeRouteState extends State<HomeRoute> {
                     title: Text('All Mentees'),
                     onTap: () {
                       Navigator.pushNamed(context, '/');
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Reminders'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/reminders');
                     },
                   ),
                   ListTile(
